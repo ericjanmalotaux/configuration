@@ -1,0 +1,91 @@
+#! /bin/bash
+#set -x
+#
+#	SCCS Id		: %W%
+#	Systeem		: psu
+#	Subsysteem	: du
+#	Type		: %Y%
+#	Naam		: %M%
+#	Versie		: %I%
+#	Datum		: %E% %U%
+#	Omschrijving	: %Q%
+#
+#	Aanroep: . set_c project [ fase ]
+#
+#	Dit script moet in het proces van de aanroepende shell worden
+#	aangeroepen om de gedefinieerde Environment Variables niet na
+#	afloop van het script kwijt te raken. Dit kan door het commando
+#	aan te roepen met een ., of het de definieren als functie.
+#
+#	Projectnaam als eerste argument is verplicht!
+#
+_EXIT_FAILURE=1
+_EXIT_SUCCESS=0
+_USAGE="Gebruik: $0 project [ fase ]"
+
+if [ $# -lt 1 ]
+then
+    echo "$0: Onvoldoende argumenten"
+    echo $_USAGE
+    exit $_EXIT_FAILURE
+fi
+#
+#	Het project wordt geacht te bestaan als een dergelijke directory
+#	bestaat.
+#
+if [ ! -d $DEV_HOME/$1 ]
+then
+    echo "Directory $DEV_HOME/$1 bestaat niet"
+    exit $_EXIT_FAILURE
+fi
+#
+#	Project Environment Variables.
+#
+export DEV_NAM=$1
+export DEV_DIR=$DEV_HOME/$DEV_NAM
+if [ "$OS" = "Windows_NT" ]
+then
+    _HOME=$DEV_DIR/home/$USERNAME
+else
+    _HOME=$DEV_DIR/home/$LOGNAME
+fi
+export DEV_DB=$DEV_NAM
+logical=$(echo $DEV_NAM | tr "a-z-." "A-Z__" )_DIR
+if [ $# -lt 2 ]
+then
+    #
+    #	Geen fase opgegeven.
+    #
+    PS1="$(echo $DEV_NAM | tr "a-z" "A-Z")> "
+    export PS1
+    export ${logical}=$_HOME
+else
+    #
+    #	De fase wordt geacht te bestaan, als de corresponderende 
+    #	directory bestaat.
+    #
+    if [ ! -d $DEV_DIR/$2 ]
+    then
+	echo $DEV_DIR/$2 bestaat niet
+	exit $_EXIT_FAILURE
+    fi
+    #
+    #	Fase Environment Variables.
+    #
+    export DEV_PHS=$2
+    PS1=$(echo "${DEV_NAM}_${DEV_PHS}> " | tr "a-z" "A-Z")
+    export PS1
+    export DEV_DB=${DEV_DB}${DEV_PHS}
+    export ${logical}=${DEV_DIR}/${DEV_PHS}
+fi
+export PS2="_$PS1"
+#
+#	Zetten _HOME directory naar project-home directory.
+#	Uitvoeren project- en/of persoonlijke profile, indien aanwezig.
+#
+[ ! -d $_HOME ] && mkdir -p $_HOME
+cd $_HOME
+[ -r $DEV_HOME/.profile ] && . $DEV_HOME/.profile $*
+[ -r $DEV_DIR/.profile ] && . $DEV_DIR/.profile $*
+[ -r $_HOME/.profile ] && . $_HOME/.profile $*
+exec $SHELL

@@ -1,0 +1,36 @@
+#! /usr/bin/bash
+#
+# Uncomment om de uitvoering van dit script te tracen:
+#set -x
+#
+# Zet het IP-adres van de WSL2 virtuele machine in de Windows hosts-file onder de naam in het eerste argument.
+# Dit adres is niet hetzelfde als dat van de Windows host en het verandert steeds.
+#
+if [ -z $1 ]
+then
+    echo "De naam voor de virtuele machine is verplicht"
+    exit 1
+fi
+# De naam van onze virtuele machine:
+_WSL2=$1
+#
+# Een tijdelijke file
+_TEMPFILE=$(mktemp)
+#
+# De Windows hosts file
+_HOSTS=/mnt/c/Windows/System32/Drivers/etc/hosts
+#
+# Het IP-adres
+_IP=$(ip addr show eth0 | grep -Po 'inet \K[\d.]+')
+#
+# Kopiëer de bestaande hosts file, zonder een eventuele eerder "$_WSL2" adres naar de tijdelijke file:
+grep $_WSL2 -v $_HOSTS > $_TEMPFILE
+#
+# Voeg het IP-adres toe aan de tijdelijke file als "$_WSL2":
+echo "$_IP $_WSL2" >> $_TEMPFILE
+#
+# Kopiëer de tijdelijke file weer naar de hosts file:
+cp $_TEMPFILE $_HOSTS
+#
+# Ruim de tijdelijke file weer op:
+rm $_TEMPFILE
