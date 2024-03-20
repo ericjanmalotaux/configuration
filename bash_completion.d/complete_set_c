@@ -1,0 +1,1 @@
+complete -W "$(ls $DEV_HOME | tr -d '/')" set_c
