@@ -40,13 +40,14 @@ else
     _HOME=$DEV_DIR/home/$LOGNAME
 fi
 export DEV_DB=$DEV_NAM
-logical=$(echo $DEV_NAM | tr "a-z-." "A-Z__" )_DIR
+_upper=${DEV_NAME@U}
+logical=${_upper//-/_}_DIR
 if [ $# -lt 2 ]
 then
     #
     #	Geen fase opgegeven.
     #
-    PS1="$(echo $DEV_NAM | tr "a-z" "A-Z")> "
+    PS1="${DEV_NAM@U}> "
     export PS1
     export ${logical}=$_HOME
 else
@@ -63,7 +64,7 @@ else
     #	Fase Environment Variables.
     #
     export DEV_PHS=$2
-    PS1=$(echo "${DEV_NAM}_${DEV_PHS}> " | tr "a-z" "A-Z")
+    PS1="${DEV_NAM@U}_${DEV_PHS@U}> "
     export PS1
     export DEV_DB=${DEV_DB}${DEV_PHS}
     export ${logical}=${DEV_DIR}/${DEV_PHS}
