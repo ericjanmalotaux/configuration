@@ -1,0 +1,9 @@
+= configuration
+
+- `hosts`
++
+For use in WSL2, to set the host `wsl` to the current IP-addres of the WSL virtual machine.
+
+- `set_c`
++
+Sets a context for development of a project.
