@@ -1,4 +1,8 @@
 #! /bin/bash
+#
+# Copyright (c) 2026 Eric Jan Malotaux
+# SPDX-License-Identifier: MIT
+#
 #set -x
 #
 #	Aanroep: set_c project [ fase ]
