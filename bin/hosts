@@ -1,5 +1,8 @@
 #! /usr/bin/bash
 #
+# Copyright (c) 2026 Eric Jan Malotaux
+# SPDX-License-Identifier: MIT
+#
 # Uncomment om de uitvoering van dit script te tracen:
 #set -x
 #
